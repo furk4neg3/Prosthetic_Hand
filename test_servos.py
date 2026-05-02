@@ -39,18 +39,18 @@ SERVO_MIN_PULSE = 500    # µs
 SERVO_MAX_PULSE = 2500   # µs
 
 # Servo channel assignments
-# Servos 0, 3, 4 turn clockwise (normal)
-# Servos 1, 2 turn anti-clockwise (inverted: angle is flipped to 180 - angle)
+# ALL servos inverted to reverse rotation direction
+# REST_ANGLE = 180 compensates so rest position stays the same physically
 SERVOS = [
-    {"name": "Thumb",  "channel": 0, "inverted": False},
+    {"name": "Thumb",  "channel": 0, "inverted": True},
     {"name": "Index",  "channel": 1, "inverted": True},
     {"name": "Middle", "channel": 2, "inverted": True},
-    {"name": "Ring",   "channel": 3, "inverted": False},
-    {"name": "Little", "channel": 4, "inverted": False},
+    {"name": "Ring",   "channel": 3, "inverted": True},
+    {"name": "Little", "channel": 4, "inverted": True},
 ]
 
 # Test angles
-REST_ANGLE = 0
+REST_ANGLE = 180
 MID_ANGLE = 90
 MAX_ANGLE = 180
 
