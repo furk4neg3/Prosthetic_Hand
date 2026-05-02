@@ -3,16 +3,22 @@
 test_servos.py
 ==============
 
-A simple test script to verify that all 5 servo motors work correctly
-via the PCA9685 controller, both individually and together.
+Test script for MG90S continuous rotation servos via PCA9685.
+
+Continuous rotation servos work differently from positional servos:
+  - They DON'T go to a specific angle
+  - Instead, the pulse width controls SPEED and DIRECTION
+  - ~1500µs = STOP (dead zone)
+  - < 1500µs = rotate one direction (CW), speed increases as value decreases
+  - > 1500µs = rotate other direction (CCW), speed increases as value increases
+
+This script lets you control servos using a throttle value:
+  -100 = full speed direction A
+     0 = stop
+  +100 = full speed direction B
 
 Usage:
   python3 test_servos.py
-
-Tests:
-  1. Each servo moves individually (0° → 90° → 180° → 0°)
-  2. All servos move together (open → close → open)
-  3. Interactive mode: manually set any servo to any angle
 """
 
 import sys
@@ -31,31 +37,21 @@ except ImportError:
 
 
 # =============================================================================
-# CONFIGURATION — must match prosthetic_hand.py
+# CONFIGURATION
 # =============================================================================
 PCA9685_I2C_ADDRESS = 0x40
 PCA9685_FREQUENCY = 50
-SERVO_MIN_PULSE = 500    # µs
-SERVO_MAX_PULSE = 2500   # µs
 
-# Servo channel assignments
-# ALL servos inverted to reverse rotation direction
-# REST_ANGLE = 180 compensates so rest position stays the same physically
 SERVOS = [
-    {"name": "Thumb",  "channel": 0, "inverted": True},
-    {"name": "Index",  "channel": 1, "inverted": True},
-    {"name": "Middle", "channel": 2, "inverted": True},
-    {"name": "Ring",   "channel": 3, "inverted": True},
-    {"name": "Little", "channel": 4, "inverted": True},
+    {"name": "Thumb",  "channel": 0},
+    {"name": "Index",  "channel": 1},
+    {"name": "Middle", "channel": 2},
+    {"name": "Ring",   "channel": 3},
+    {"name": "Little", "channel": 4},
 ]
 
-# Test angles
-REST_ANGLE = 180
-MID_ANGLE = 90
-MAX_ANGLE = 180
-
-# Delay between movements (seconds)
-STEP_DELAY = 1.0
+# How long to run each servo during auto tests (seconds)
+RUN_DURATION = 1.0
 
 
 # =============================================================================
@@ -65,7 +61,7 @@ kit = None
 
 
 def init_servos():
-    """Initialize the PCA9685 and configure all servo channels."""
+    """Initialize the PCA9685."""
     global kit
     if not SERVO_AVAILABLE:
         print("  [SIM] Servos initialized (simulation)")
@@ -75,59 +71,55 @@ def init_servos():
         kit = ServoKit(
             channels=16,
             address=PCA9685_I2C_ADDRESS,
-            frequency=PCA9685_FREQUENCY,
         )
-        for servo in SERVOS:
-            kit.servo[servo["channel"]].set_pulse_width_range(
-                SERVO_MIN_PULSE, SERVO_MAX_PULSE
-            )
-        print("✅ PCA9685 initialized, all servo channels configured")
+        print("✅ PCA9685 initialized")
     except Exception as e:
         print(f"❌ Failed to initialize PCA9685: {e}")
-        print("   Falling back to SIMULATION mode")
         kit = None
 
 
-def set_servo(channel, angle, name=""):
-    """Set a single servo to a given angle, respecting inversion."""
-    angle = max(0, min(180, angle))
+def set_throttle(channel, throttle, name=""):
+    """
+    Set a continuous rotation servo's throttle.
 
-    # Find if this servo is inverted
-    inverted = False
-    for servo in SERVOS:
-        if servo["channel"] == channel:
-            inverted = servo.get("inverted", False)
-            break
+    throttle: float from -1.0 to 1.0
+      -1.0 = full speed direction A
+       0.0 = stop
+      +1.0 = full speed direction B
+    """
+    throttle = max(-1.0, min(1.0, throttle))
+    label = f"{name} (ch{channel})" if name else f"ch{channel}"
 
-    # Flip angle for anti-clockwise servos
-    actual_angle = (180 - angle) if inverted else angle
-
-    inv_label = " [inv]" if inverted else ""
-    label = f"{name} (ch{channel}){inv_label}" if name else f"ch{channel}{inv_label}"
-    print(f"    {label} → {angle:3d}° (actual: {actual_angle:3d}°)")
+    if throttle == 0:
+        print(f"    {label} → STOP")
+    elif throttle > 0:
+        print(f"    {label} → +{throttle:.2f} (direction A, {abs(throttle)*100:.0f}% speed)")
+    else:
+        print(f"    {label} → {throttle:.2f} (direction B, {abs(throttle)*100:.0f}% speed)")
 
     if kit is not None:
         try:
-            kit.servo[channel].angle = actual_angle
+            kit.continuous_servo[channel].throttle = throttle
         except Exception as e:
             print(f"    ⚠️  Error: {e}")
 
 
-def set_all_servos(angle):
-    """Set all servos to the same angle."""
+def stop_all():
+    """Stop all servos."""
     for servo in SERVOS:
-        set_servo(servo["channel"], angle, servo["name"])
+        set_throttle(servo["channel"], 0, servo["name"])
 
 
 # =============================================================================
 # TEST 1: Individual servo test
 # =============================================================================
 def test_individual():
-    """Test each servo one by one: 0° → 90° → 180° → 0°."""
+    """Test each servo one by one in both directions."""
     print()
     print("=" * 50)
     print("  TEST 1: Individual Servo Test")
-    print("  Each servo: 0° → 90° → 180° → 0°")
+    print(f"  Each servo: stop → CW → stop → CCW → stop")
+    print(f"  Duration per step: {RUN_DURATION}s")
     print("=" * 50)
 
     for servo in SERVOS:
@@ -136,23 +128,27 @@ def test_individual():
 
         print(f"\n  ── {name} (channel {ch}) ──")
 
-        print(f"  → Moving to {REST_ANGLE}°")
-        set_servo(ch, REST_ANGLE, name)
-        time.sleep(STEP_DELAY)
+        print(f"  → Stop")
+        set_throttle(ch, 0, name)
+        time.sleep(RUN_DURATION)
 
-        print(f"  → Moving to {MID_ANGLE}°")
-        set_servo(ch, MID_ANGLE, name)
-        time.sleep(STEP_DELAY)
+        print(f"  → Direction A (half speed)")
+        set_throttle(ch, 0.5, name)
+        time.sleep(RUN_DURATION)
 
-        print(f"  → Moving to {MAX_ANGLE}°")
-        set_servo(ch, MAX_ANGLE, name)
-        time.sleep(STEP_DELAY)
+        print(f"  → Stop")
+        set_throttle(ch, 0, name)
+        time.sleep(RUN_DURATION)
 
-        print(f"  → Returning to {REST_ANGLE}°")
-        set_servo(ch, REST_ANGLE, name)
-        time.sleep(STEP_DELAY)
+        print(f"  → Direction B (half speed)")
+        set_throttle(ch, -0.5, name)
+        time.sleep(RUN_DURATION)
 
-        print(f"  ✅ {name} OK")
+        print(f"  → Stop")
+        set_throttle(ch, 0, name)
+        time.sleep(0.5)
+
+        print(f"  ✅ {name} done")
 
     print("\n✅ Individual test complete!")
 
@@ -161,28 +157,33 @@ def test_individual():
 # TEST 2: All servos together
 # =============================================================================
 def test_all_together():
-    """Test all servos moving together: open → close → open."""
+    """Test all servos moving together."""
     print()
     print("=" * 50)
     print("  TEST 2: All Servos Together")
-    print("  All at once: 0° → 90° → 180° → 0°")
+    print(f"  Duration per step: {RUN_DURATION}s")
     print("=" * 50)
 
-    print(f"\n  → All to {REST_ANGLE}° (open)")
-    set_all_servos(REST_ANGLE)
-    time.sleep(STEP_DELAY * 1.5)
+    print(f"\n  → All STOP")
+    stop_all()
+    time.sleep(RUN_DURATION)
 
-    print(f"\n  → All to {MID_ANGLE}° (half close)")
-    set_all_servos(MID_ANGLE)
-    time.sleep(STEP_DELAY * 1.5)
+    print(f"\n  → All direction A (half speed)")
+    for servo in SERVOS:
+        set_throttle(servo["channel"], 0.5, servo["name"])
+    time.sleep(RUN_DURATION)
 
-    print(f"\n  → All to {MAX_ANGLE}° (full close)")
-    set_all_servos(MAX_ANGLE)
-    time.sleep(STEP_DELAY * 1.5)
+    print(f"\n  → All STOP")
+    stop_all()
+    time.sleep(RUN_DURATION)
 
-    print(f"\n  → All to {REST_ANGLE}° (open)")
-    set_all_servos(REST_ANGLE)
-    time.sleep(STEP_DELAY)
+    print(f"\n  → All direction B (half speed)")
+    for servo in SERVOS:
+        set_throttle(servo["channel"], -0.5, servo["name"])
+    time.sleep(RUN_DURATION)
+
+    print(f"\n  → All STOP")
+    stop_all()
 
     print("\n✅ All-together test complete!")
 
@@ -191,20 +192,22 @@ def test_all_together():
 # TEST 3: Interactive mode
 # =============================================================================
 def test_interactive():
-    """Let the user manually control any servo."""
+    """Manual control of any servo."""
     print()
     print("=" * 50)
     print("  TEST 3: Interactive Mode")
-    print("  Manually set any servo to any angle")
     print("=" * 50)
 
-    print("\n  Commands:")
-    print("    <servo#> <angle>  — Set servo to angle (e.g. '1 90')")
-    print("    all <angle>       — Set ALL servos to angle (e.g. 'all 45')")
-    print("    rest              — All servos to 0°")
-    print("    q                 — Quit interactive mode")
-    print()
-    print("  Servo numbers:")
+    print("""
+  Commands:
+    <servo#> <throttle>  — Set servo throttle (-100 to +100)
+                           e.g. '0 50'  = servo 0 at 50% direction A
+                           e.g. '1 -75' = servo 1 at 75% direction B
+    all <throttle>       — Set ALL servos
+    stop                 — Stop all servos
+    q                    — Quit
+
+  Servo numbers:""")
     for servo in SERVOS:
         print(f"    {servo['channel']} = {servo['name']}")
     print()
@@ -218,32 +221,35 @@ def test_interactive():
         if not cmd:
             continue
 
-        if cmd == "q" or cmd == "quit" or cmd == "exit":
+        if cmd in ("q", "quit", "exit"):
             break
 
-        if cmd == "rest":
-            print("  → All to rest (0°)")
-            set_all_servos(REST_ANGLE)
+        if cmd == "stop":
+            print("  → Stopping all")
+            stop_all()
             continue
 
         parts = cmd.split()
         if len(parts) != 2:
-            print("  ⚠️  Usage: <servo#> <angle>  or  all <angle>  or  rest  or  q")
+            print("  ⚠️  Usage: <servo#> <throttle>  or  all <throttle>  or  stop  or  q")
             continue
 
         try:
-            angle = int(parts[1])
+            throttle_pct = float(parts[1])
         except ValueError:
-            print("  ⚠️  Angle must be a number (0-180)")
+            print("  ⚠️  Throttle must be a number (-100 to +100)")
             continue
 
-        if angle < 0 or angle > 180:
-            print("  ⚠️  Angle must be between 0 and 180")
+        if throttle_pct < -100 or throttle_pct > 100:
+            print("  ⚠️  Throttle must be between -100 and +100")
             continue
+
+        throttle = throttle_pct / 100.0  # Convert to -1.0 to 1.0
 
         if parts[0] == "all":
-            print(f"  → All servos to {angle}°")
-            set_all_servos(angle)
+            print(f"  → All servos to {throttle_pct:+.0f}%")
+            for servo in SERVOS:
+                set_throttle(servo["channel"], throttle, servo["name"])
         else:
             try:
                 ch = int(parts[0])
@@ -256,12 +262,9 @@ def test_interactive():
                 continue
 
             name = SERVOS[ch]["name"]
-            print(f"  → {name} to {angle}°")
-            set_servo(ch, angle, name)
+            set_throttle(ch, throttle, name)
 
-    # Return to rest on exit
-    print("\n  → Returning all to rest")
-    set_all_servos(REST_ANGLE)
+    stop_all()
     print("  ✅ Interactive mode ended")
 
 
@@ -270,23 +273,22 @@ def test_interactive():
 # =============================================================================
 def main():
     print()
-    print("🦾 PROSTHETIC HAND — SERVO TEST")
+    print("🦾 PROSTHETIC HAND — SERVO TEST (Continuous Rotation)")
     print("=" * 50)
 
     init_servos()
 
-    # Return all to rest first
-    print("\n🔄 Setting all servos to rest position...")
-    set_all_servos(REST_ANGLE)
+    print("\n🔄 Stopping all servos...")
+    stop_all()
     time.sleep(0.5)
 
     while True:
         print()
         print("─" * 50)
         print("  Select a test:")
-        print("  [1] Individual servo test (one by one)")
+        print("  [1] Individual servo test (one by one, both directions)")
         print("  [2] All servos together")
-        print("  [3] Interactive mode (manual control)")
+        print("  [3] Interactive mode (manual throttle control)")
         print("  [0] Exit")
         print("─" * 50)
 
@@ -306,9 +308,8 @@ def main():
         else:
             print("  ⚠️  Enter 0, 1, 2, or 3")
 
-    # Final cleanup
-    print("\n🔄 Returning all servos to rest...")
-    set_all_servos(REST_ANGLE)
+    print("\n🔄 Stopping all servos...")
+    stop_all()
     print("👋 Done!")
 
 
