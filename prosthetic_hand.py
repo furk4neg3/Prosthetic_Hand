@@ -160,151 +160,151 @@ MOVEMENTS = [
     {
         "encoded": 0, "original": 1,
         "name": "Index flexion",
-        "angles": {"thumb": 0, "index": 150, "middle": 0, "ring": 0, "little": 0}
+        "angles": {"thumb": 50, "index": 180, "middle": 40, "ring": 70, "little": 50}
     },
     {
         "encoded": 1, "original": 2,
         "name": "Index extension",
-        "angles": {"thumb": 0, "index": 0, "middle": 0, "ring": 0, "little": 0}
+        "angles": {"thumb": 50, "index": 0, "middle": 40, "ring": 70, "little": 50}
     },
     {
         "encoded": 2, "original": 3,
         "name": "Middle flexion",
-        "angles": {"thumb": 0, "index": 0, "middle": 150, "ring": 0, "little": 0}
+        "angles": {"thumb": 50, "index": 50, "middle": 180, "ring": 70, "little": 50}
     },
     {
         "encoded": 3, "original": 4,
-        "name": "Ring flexion",
-        "angles": {"thumb": 0, "index": 0, "middle": 0, "ring": 150, "little": 0}
+        "name": "Middle extension",
+        "angles": {"thumb": 50, "index": 50, "middle": 0, "ring": 70, "little": 50}
     },
     {
         "encoded": 4, "original": 5,
-        "name": "Little finger flexion",
-        "angles": {"thumb": 0, "index": 0, "middle": 0, "ring": 0, "little": 150}
+        "name": "Ring flexion",
+        "angles": {"thumb": 50, "index": 50, "middle": 40, "ring": 180, "little": 50}
     },
     {
         "encoded": 5, "original": 6,
-        "name": "Thumb adduction",
-        "angles": {"thumb": 90, "index": 0, "middle": 0, "ring": 0, "little": 0}
+        "name": "Ring extension",
+        "angles": {"thumb": 50, "index": 50, "middle": 40, "ring": 0, "little": 50}
     },
     {
         "encoded": 6, "original": 7,
-        "name": "Thumb abduction",
-        "angles": {"thumb": 30, "index": 0, "middle": 0, "ring": 0, "little": 0}
+        "name": "Little finger flexion",
+        "angles": {"thumb": 50, "index": 50, "middle": 40, "ring": 70, "little": 180}
     },
     {
         "encoded": 7, "original": 8,
-        "name": "Thumb flexion",
-        "angles": {"thumb": 150, "index": 0, "middle": 0, "ring": 0, "little": 0}
+        "name": "Little finger extension",
+        "angles": {"thumb": 50, "index": 50, "middle": 40, "ring": 70, "little": 0}
     },
     {
         "encoded": 8, "original": 9,
-        "name": "Thumb extension",
-        "angles": {"thumb": 0, "index": 0, "middle": 0, "ring": 0, "little": 0}
+        "name": "Thumb adduction",
+        "angles": {"thumb": 0, "index": 50, "middle": 40, "ring": 70, "little": 50}
     },
     {
         "encoded": 9, "original": 10,
-        "name": "Abduction of all fingers",
-        "angles": {"thumb": 30, "index": 10, "middle": 10, "ring": 10, "little": 10}
+        "name": "Thumb abduction",
+        "angles": {"thumb": 120, "index": 50, "middle": 40, "ring": 70, "little": 50}
     },
     {
         "encoded": 10, "original": 11,
-        "name": "Fingers flexed together (fist)",
-        "angles": {"thumb": 150, "index": 150, "middle": 150, "ring": 150, "little": 150}
+        "name": "Thumb flexion",
+        "angles": {"thumb": 0, "index": 50, "middle": 40, "ring": 70, "little": 50}
     },
     {
         "encoded": 11, "original": 12,
-        "name": "Pointing index",
-        "angles": {"thumb": 120, "index": 0, "middle": 150, "ring": 150, "little": 150}
+        "name": "Thumb extension",
+        "angles": {"thumb": 180, "index": 50, "middle": 40, "ring": 70, "little": 50}
     },
 
     # ─── Exercise 2: Hand configurations (labels 13-20) ───
     {
         "encoded": 12, "original": 13,
-        "name": "Tripod grasp",
-        "angles": {"thumb": 120, "index": 120, "middle": 120, "ring": 0, "little": 0}
+        "name": "Thumb up",
+        "angles": {"thumb": 0, "index": 180, "middle": 180, "ring": 180, "little": 180}
     },
     {
         "encoded": 13, "original": 14,
-        "name": "Prismatic power grasp",
-        "angles": {"thumb": 130, "index": 130, "middle": 130, "ring": 130, "little": 130}
+        "name": "Scissors",
+        "angles": {"thumb": 180, "index": 0, "middle": 0, "ring": 180, "little": 180}
     },
     {
         "encoded": 14, "original": 15,
-        "name": "Hook grasp",
-        "angles": {"thumb": 0, "index": 130, "middle": 130, "ring": 0, "little": 0}
+        "name": "Three move",
+        "angles": {"thumb": 0, "index": 0, "middle": 0, "ring": 180, "little": 180}
     },
     {
         "encoded": 15, "original": 16,
-        "name": "Prismatic pinch",
-        "angles": {"thumb": 100, "index": 100, "middle": 0, "ring": 0, "little": 0}
+        "name": "Thumb flexion",
+        "angles": {"thumb": 180, "index": 0, "middle": 0, "ring": 0, "little": 0}
     },
     {
         "encoded": 16, "original": 17,
-        "name": "Tip pinch",
-        "angles": {"thumb": 80, "index": 80, "middle": 0, "ring": 0, "little": 0}
+        "name": "Abduction of all fingers",
+        "angles": {"thumb": 0, "index": 0, "middle": 0, "ring": 0, "little": 0}
     },
     {
         "encoded": 17, "original": 18,
-        "name": "Lateral / key grip",
-        "angles": {"thumb": 60, "index": 100, "middle": 100, "ring": 100, "little": 100}
+        "name": "Fist",
+        "angles": {"thumb": 180, "index": 180, "middle": 180, "ring": 180, "little": 180}
     },
     {
         "encoded": 18, "original": 19,
-        "name": "Spherical grip",
-        "angles": {"thumb": 90, "index": 90, "middle": 90, "ring": 90, "little": 90}
+        "name": "Pointing index",
+        "angles": {"thumb": 180, "index": 0, "middle": 180, "ring": 180, "little": 180}
     },
     {
         "encoded": 19, "original": 20,
-        "name": "Extension type",
-        "angles": {"thumb": 0, "index": 0, "middle": 0, "ring": 0, "little": 0}
+        "name": "Abduction of extended fingers",
+        "angles": {"thumb": 50, "index": 50, "middle": 50, "ring": 90, "little": 50}
     },
 
     # ─── Exercise 3: Grasping / functional (labels 30-35, 38-40) ───
     {
         "encoded": 20, "original": 30,
         "name": "Large diameter grasp",
-        "angles": {"thumb": 100, "index": 100, "middle": 100, "ring": 100, "little": 100}
+        "angles": {"thumb": 80, "index": 90, "middle": 100, "ring": 110, "little": 80}
     },
     {
         "encoded": 21, "original": 31,
         "name": "Small diameter grasp",
-        "angles": {"thumb": 130, "index": 130, "middle": 130, "ring": 130, "little": 130}
+        "angles": {"thumb": 130, "index": 130, "middle": 130, "ring": 140, "little": 130}
     },
     {
         "encoded": 22, "original": 32,
         "name": "Fixed hook grasp",
-        "angles": {"thumb": 0, "index": 120, "middle": 120, "ring": 120, "little": 120}
+        "angles": {"thumb": 0, "index": 110, "middle": 110, "ring": 130, "little": 110}
     },
     {
         "encoded": 23, "original": 33,
         "name": "Index finger extension grasp",
-        "angles": {"thumb": 100, "index": 0, "middle": 100, "ring": 100, "little": 100}
+        "angles": {"thumb": 90, "index": 50, "middle": 150, "ring": 180, "little": 180}
     },
     {
         "encoded": 24, "original": 34,
         "name": "Medium wrap",
-        "angles": {"thumb": 110, "index": 110, "middle": 110, "ring": 110, "little": 110}
+        "angles": {"thumb": 110, "index": 110, "middle": 110, "ring": 150, "little": 110}
     },
     {
         "encoded": 25, "original": 35,
         "name": "Ring grasp",
-        "angles": {"thumb": 80, "index": 80, "middle": 80, "ring": 80, "little": 80}
+        "angles": {"thumb": 110, "index": 90, "middle": 0, "ring": 0, "little": 0}
     },
     {
         "encoded": 26, "original": 38,
-        "name": "Stick grasp",
-        "angles": {"thumb": 90, "index": 90, "middle": 90, "ring": 0, "little": 0}
+        "name": "Writing tripod Grasp",
+        "angles": {"thumb": 120, "index": 110, "middle": 150, "ring": 180, "little": 180}
     },
     {
         "encoded": 27, "original": 39,
-        "name": "Writing tripod",
-        "angles": {"thumb": 70, "index": 70, "middle": 70, "ring": 0, "little": 0}
+        "name": "Power Sphere Grasp",
+        "angles": {"thumb": 75, "index": 75, "middle": 75, "ring": 110, "little": 75}
     },
     {
         "encoded": 28, "original": 40,
-        "name": "Power disk",
-        "angles": {"thumb": 60, "index": 120, "middle": 120, "ring": 120, "little": 120}
+        "name": "Three Finger Sphere Grasp",
+        "angles": {"thumb": 80, "index": 80, "middle": 80, "ring": 160, "little": 180}
     },
 ]
 
@@ -473,7 +473,7 @@ class ServoController:
             angle = max(0, min(180, angle))  # Clamp to valid range
 
             # Flip angle for anti-clockwise (inverted) servos
-            inverted = config.SERVO_INVERTED.get(name, False)
+            inverted = self.config.SERVO_INVERTED.get(name, False)
             actual_angle = (180 - angle) if inverted else angle
 
             if self.kit is not None:
